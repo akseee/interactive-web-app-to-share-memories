@@ -38,8 +38,8 @@ jobInput.value = profileDescr.textContent;
 
 function handleAddCard(evt) {
   evt.preventDefault();
-  let newCardName = nameAddInput.value;
-  let newCardLink = linkAddInput.value;
+  const newCardName = nameAddInput.value;
+  const newCardLink = linkAddInput.value;
 
   placesContainer.prepend(
     createCard(
@@ -59,7 +59,7 @@ buttonAdd.addEventListener("click", () => {
   openModal(popupAdd);
 });
 
-function handleFormSubmit(evt) {
+function handleEditFormSubmit(evt) {
   evt.preventDefault();
 
   const newName = nameInput.value;
@@ -70,7 +70,7 @@ function handleFormSubmit(evt) {
   closeModal(popupEdit);
 }
 
-formEdit.addEventListener("submit", handleFormSubmit);
+formEdit.addEventListener("submit", handleEditFormSubmit);
 
 buttonEdit.addEventListener("click", () => {
   openModal(popupEdit);
@@ -82,7 +82,8 @@ function imagePopup(evt) {
   const cardTitle = card.querySelector(".card__title");
 
   popupCardImg.src = cardImg.src;
-  popupCardImg.link = cardImg.link;
+  popupCardImg.alt = cardImg.alt;
   popupCardDescr.textContent = cardTitle.textContent;
   openModal(popupImg);
 }
+

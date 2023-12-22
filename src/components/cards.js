@@ -33,7 +33,7 @@ export const initialCards = [
   },
 ];
 
-export function createCard(card, remove, like, image) {
+export function createCard(card, remove, putLike, openPopupImage) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   cardElement.querySelector(".card__image").src = card.link;
   cardElement.querySelector(".card__title").textContent = card.name;
@@ -42,8 +42,8 @@ export function createCard(card, remove, like, image) {
   cardElement
     .querySelector(".card__delete-button")
     .addEventListener("click", (event) => remove(event));
-  cardElement.querySelector(".card__image").addEventListener("click", image);
-  cardElement.addEventListener("click", like);
+  cardElement.querySelector(".card__image").addEventListener("click", openPopupImage);
+  cardElement.addEventListener("click", putLike);
 
   return cardElement;
 }
