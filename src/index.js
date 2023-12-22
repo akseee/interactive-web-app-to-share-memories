@@ -25,8 +25,8 @@ const formEdit = document.forms["edit-profile"];
 const nameInput = document.querySelector(".popup__input_type_name");
 const jobInput = document.querySelector(".popup__input_type_description");
 
-const popupImg = document.querySelector(".popup_type_image");
 const popupCardImg = document.querySelector(".popup__image");
+const popupImg = document.querySelector(".popup_type_image");
 const popupCardDescr = document.querySelector(".popup__caption");
 
 initialCards.forEach((item) => {
@@ -76,14 +76,11 @@ buttonEdit.addEventListener("click", () => {
   openModal(popupEdit);
 });
 
-function imagePopup(evt) {
-  const card = evt.target.closest(".card");
-  const cardImg = card.querySelector(".card__image");
-  const cardTitle = card.querySelector(".card__title");
 
-  popupCardImg.src = cardImg.src;
-  popupCardImg.alt = cardImg.alt;
-  popupCardDescr.textContent = cardTitle.textContent;
+function imagePopup(name, link) {
+  popupCardDescr.textContent = name;
+  popupCardImg.alt = name;
+  popupCardImg.src = link;
+
   openModal(popupImg);
 }
-
