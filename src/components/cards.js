@@ -1,50 +1,25 @@
 import { cardTemplate } from "../index.js";
 
-export const initialCards = [
-  {
-    name: "Архыз",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg",
-    alt: "Изображение гор на заднем плане и озера на переднем",
-  },
-  {
-    name: "Челябинская область",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg",
-    alt: "Изображение озера в лесу",
-  },
-  {
-    name: "Иваново",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg",
-    alt: "Изображение городских хрущевок",
-  },
-  {
-    name: "Камчатка",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg",
-    alt: "Изображение горы на заднем плане и поля на переднем",
-  },
-  {
-    name: "Холмогорский район",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg",
-    alt: "Изображение железной дороги в лесу",
-  },
-  {
-    name: "Байкал",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg",
-    alt: "Изображение скал и замерзшего Байкала",
-  },
-];
-
 export function createCard(card, remove, putLike, openImage) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
-  cardElement.querySelector(".card__image").src = card.link;
-  cardElement.querySelector(".card__title").textContent = card.name;
-  cardElement.querySelector(".card__image").alt = card.alt;
+  const cardImage = cardElement.querySelector('.card__image');
+  const cardTitle = cardElement.querySelector('.card__title');
+  const cardlLikeButton = cardElement.querySelector('.card__like-button');
+  const cardLikesAmount = cardElement.querySelector('.card__like-counter');
+  const cardDeteleButton = cardElement.querySelector('.card__delete-button');
+  
 
-  const imageCard = cardElement.querySelector(".card__image") 
+  cardImage.src = card.link;
+  cardImage.alt = card.alt;
+  cardTitle.textContent = card.name;
+
+  cardLikesAmount.textContent = card.likes.length
+
 
   cardElement
     .querySelector(".card__delete-button")
     .addEventListener("click", (event) => remove(event));
-  imageCard.addEventListener("click", () => openImage(card.name, card.link));
+  cardImage.addEventListener("click", () => openImage(card.name, card.link));
   cardElement.addEventListener("click", putLike);
 
   return cardElement;
@@ -60,3 +35,4 @@ export function likeCard(evt) {
     evt.target.classList.toggle("card__like-button_is-active");
   }
 }
+
