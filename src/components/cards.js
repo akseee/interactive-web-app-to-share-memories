@@ -3,7 +3,7 @@ import { deleteCardApi } from "./api.js";
 const myId = "f3944d46f76a800a9481ae13";
 const cardTemplate = document.querySelector("#card-template").content;
 
-export function createCard(card, remove, putLike, openImage) {
+export function createCard(card, remove, putLike, openImage, id) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const cardImage = cardElement.querySelector(".card__image");
   const cardTitle = cardElement.querySelector(".card__title");
@@ -17,14 +17,15 @@ export function createCard(card, remove, putLike, openImage) {
 
   cardLikesAmount.textContent = card.likes.length;
 
-  if (isCardLiked(card, myId)) {
-    cardlLikeButton.classList.add("card__like-button_is-active");
-  }
+  // if (isCardLiked(card, myId)) {
+  //   cardlLikeButton.classList.add("card__like-button_is-active");
+  // }
 
-  if (myId === card.owner._id) {
+  if (myId === id) {
     cardDeteleButton.style.display = "block";
-    cardDeteleButton.addEventListener("click", (event) =>
-      remove(event, card._id)
+    cardDeteleButton.addEventListener("click", (event) => {
+            remove(event, card._id)
+    }
     );
   }
 

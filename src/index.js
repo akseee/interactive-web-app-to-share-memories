@@ -40,7 +40,7 @@ const loadInitialData = () =>
       loadUserProfilePicture(userInfo.avatar);
       cardsInfo.forEach((cardInfo) =>
         placesContainer.append(
-          createCard(cardInfo, deleteCard, likeCard, imagePopup)
+          createCard(cardInfo, deleteCard, likeCard, imagePopup, cardInfo.owner._id)
         )
       );
     })
@@ -62,23 +62,19 @@ function handleAddCard(evt) {
   const newCardName = nameAddInput.value;
   const newCardLink = linkAddInput.value;
 
-  addNewCardApi(newCardName, newCardLink).then((card) => {
-    console.log(card);
+  addNewCardApi(newCardName, newCardLink)
+  .then((card) => {
     closeModal(popupAdd);
     placesContainer.prepend(
       createCard(
-        {
-          name: newCardName,
-          link: newCardLink,
-          alt: newCardName,
-          likes: card.likes,
-        },
+        { name: newCardName, link: newCardLink, alt: newCardName, likes: card.likes, _id: card._id },
         deleteCard,
         likeCard,
-        imagePopup
+        imagePopup,
+        card.owner._id
       )
-    );
-  });
+    )
+  })
 
   nameAddInput.value = "";
   linkAddInput.value = "";
