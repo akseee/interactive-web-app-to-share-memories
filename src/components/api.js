@@ -78,7 +78,7 @@ export const addNewCardApi = (name, link) => {
 //   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
 //     method: "PUT",
 //     headers: config.headers,
-//  
+//
 //   }).then((res) => {
 //     if (res.ok) {
 //       return res.json();
@@ -91,7 +91,7 @@ export const addNewCardApi = (name, link) => {
 //   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
 //     method: "DELETE",
 //     headers: config.headers,
-//   
+//
 //   }).then((res) => {
 //     if (res.ok) {
 //       return res.json();
@@ -99,7 +99,6 @@ export const addNewCardApi = (name, link) => {
 //     return Promise.reject(`Ошибка удаления лайка: ${res.status}`);
 //   });
 // };
-
 
 export const changeProfilePictureApi = (avatar) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
@@ -121,12 +120,11 @@ export const changeProfilePictureApi = (avatar) => {
 export const deleteCardApi = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
-    headers: config.headers
-  })
-  .then((res) => {
+    headers: config.headers,
+  }).then((res) => {
     if (res.ok) {
       return res.json();
     }
     return Promise.reject(`Ошибка удаления карточки: ${res.status}`);
   });
-}
+};

@@ -62,19 +62,23 @@ function handleAddCard(evt) {
   const newCardName = nameAddInput.value;
   const newCardLink = linkAddInput.value;
 
-  addNewCardApi(newCardName, newCardLink)
-  .then((card) => {
+  addNewCardApi(newCardName, newCardLink).then((card) => {
     console.log(card);
     closeModal(popupAdd);
     placesContainer.prepend(
       createCard(
-        { name: newCardName, link: newCardLink, alt: newCardName, likes: card.likes},
+        {
+          name: newCardName,
+          link: newCardLink,
+          alt: newCardName,
+          likes: card.likes,
+        },
         deleteCard,
         likeCard,
         imagePopup
       )
-    )
-  })
+    );
+  });
 
   nameAddInput.value = "";
   linkAddInput.value = "";
