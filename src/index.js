@@ -1,19 +1,21 @@
 import "./pages/index.css";
-import {
-  createCard,
-  deleteCard,
-  likeCard,
-  initialCards,
-} from "./components/cards.js";
+import { createCard, deleteCard, likeCard } from "./components/cards.js";
 import { openModal, closeModal } from "./components/modal.js";
 import {
   clearValidation,
   enableValidation,
   validationConfig,
 } from "./components/validate.js";
+import {
+  config,
+  getUserInfoApi,
+  getCardsApi,
+  editUserInfoApi,
+  addNewCardApi,
+  changeProfilePictureApi,
+} from "./components/api.js";
 import { data } from "autoprefixer";
 
-export const cardTemplate = document.querySelector("#card-template").content;
 export const placesContainer = document.querySelector(".places__list");
 
 const buttonAdd = document.querySelector(".profile__add-button");
@@ -29,13 +31,28 @@ const formEdit = document.forms["edit-profile"];
 const nameInput = document.querySelector(".popup__input_type_name");
 const jobInput = document.querySelector(".popup__input_type_description");
 
-const popupCardImg = document.querySelector(".popup__image");
-const popupImg = document.querySelector(".popup_type_image");
-const popupCardDescr = document.querySelector(".popup__caption");
-
-
-
 //  ADDING NEW CARD
+
+const loadInitialData = () =>
+  Promise.all([getUserInfoApi(), getCardsApi()])
+    .then(([userInfo, cardsInfo]) => {
+      loadUserInfo(userInfo.name, userInfo.about);
+      loadUserProfilePicture(userInfo.avatar);
+      cardsInfo.forEach((cardInfo) =>
+        placesContainer.append(
+          createCard(cardInfo, deleteCard, likeCard, imagePopup)
+        )
+      );
+    })
+    .catch((errorCode) => {
+      loadUserInfo(null);
+      console.log(
+        "Ошибка при получении информации о пользователе или карточках",
+        errorCode
+      );
+    });
+
+// add a card to page
 function handleAddCard(evt) {
   evt.preventDefault();
 
@@ -45,22 +62,22 @@ function handleAddCard(evt) {
   const newCardName = nameAddInput.value;
   const newCardLink = linkAddInput.value;
 
-  // addNewCard(newCardName, newCardLink) 
-  //   .then((data) => {
-  //     console.log(data);
-  //     placesContainer.prepend(
-  //       createCard(
-  //         {name: newCardName, link: newCardLink, alt: newCardName },
-  //         deleteCard,
-  //         likeCard,
-  //         imagePopup
-  //       )
-  //     );
-  //   })
-  
+  addNewCardApi(newCardName, newCardLink)
+  .then((card) => {
+    console.log(card);
+    closeModal(popupAdd);
+    placesContainer.prepend(
+      createCard(
+        { name: newCardName, link: newCardLink, alt: newCardName, likes: card.likes},
+        deleteCard,
+        likeCard,
+        imagePopup
+      )
+    )
+  })
+
   nameAddInput.value = "";
   linkAddInput.value = "";
-  closeModal(popupAdd);
 }
 
 formAdd.addEventListener("submit", handleAddCard);
@@ -68,8 +85,6 @@ buttonAdd.addEventListener("click", () => {
   openModal(popupAdd);
   clearValidation(formAdd, validationConfig);
 });
-
-
 
 // EDITING PROFILE
 
@@ -80,17 +95,15 @@ function loadUserInfo(userName, userAbout) {
 
 function handleEditFormSubmit(evt) {
   evt.preventDefault();
-  editUserInfo(nameInput.value, jobInput.value)
+  editUserInfoApi(nameInput.value, jobInput.value)
     .then((user) => {
-      console.log(user)
-      loadUserInfo(user.name, user.about)
+      loadUserInfo(user.name, user.about);
       closeModal(popupEdit);
     })
     .catch((err) => {
       console.log(err);
-    })
-  
-  }
+    });
+}
 
 formEdit.addEventListener("submit", handleEditFormSubmit);
 
@@ -101,9 +114,10 @@ buttonEdit.addEventListener("click", () => {
   clearValidation(formEdit, validationConfig);
 });
 
+const popupCardImg = document.querySelector(".popup__image");
+const popupImg = document.querySelector(".popup_type_image");
+const popupCardDescr = document.querySelector(".popup__caption");
 
-
-//  NEW IMAGE
 function imagePopup(name, link) {
   popupCardDescr.textContent = name;
   popupCardImg.alt = name;
@@ -111,100 +125,34 @@ function imagePopup(name, link) {
   openModal(popupImg);
 }
 
-enableValidation(validationConfig);
+const buttonProfilePicture = document.querySelector(".profile__image");
+const popupProfilePicture = document.querySelector(".popup_type_avatar");
+const formProfilePicture = document.forms["new-avatar"];
+const inputProfilePicture = document.querySelector(".popup__input_type_avatar");
 
-//part 3 API
-//2. Перед стартом. Как сделать запрос к серверу
+buttonProfilePicture.addEventListener("click", () => {
+  openModal(popupProfilePicture);
+  clearValidation(formProfilePicture, validationConfig);
+  inputProfilePicture.value = "";
+});
 
-const myId = "f3944d46f76a800a9481ae13";
-const config = {
-  baseUrl: "https://nomoreparties.co/v1/wff-cohort-4",
-  headers: {
-    authorization: "13f3996e-14d8-4c67-b30c-98db3b264923",
-    "Content-Type": "application/json",
-  },
-};
-
-//3. Загрузка информации о пользователе с сервера
-const getUserInfo = () => {
-  return fetch(`${config.baseUrl}/users/me`, {
-    method: "GET",
-    headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(
-      `Ошибка получения информации о пользователе: ${res.status}`
-    );
-  });
-};
-
-
-//4. Загрузка карточек с сервера
-const getCards = () => {
-  return fetch(`${config.baseUrl}/cards`, {
-    method: "GET",
-    headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка загрузки карточек: ${res.status}`);
-  })
-};
-
-getCards().then((data) => data.forEach((item) => {
-    placesContainer.append(createCard(item, deleteCard, likeCard, imagePopup));
-  }))
-
-// initialCards.forEach((item) => {
-//   placesContainer.append(createCard(item, deleteCard, likeCard, imagePopup));
-// });
-
-const getUserCardData = () => {
-  return Promise.all([getUserInfo(), getCards()]);
-};
-
-//5. Редактирование профиля
-
-const editUserInfo = (name, about) => {
-  return fetch(`${config.baseUrl}/users/me`, {
-    method: "PATCH",
-    headers: config.headers,
-    body: JSON.stringify({
-      name: name,
-      about: about,
-    }),
-  })
-  .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка загрузки данных профиля: ${res.status}`);
-  });
-};
-
-
-
-// 6. Добавление новой карточки
-
-const addNewCard = (name, link) => {
-  return fetch(`${config.baseUrl}/cards`, {
-    method: "POST",
-    headers: config.headers,
-    body: JSON.stringify({
-      name: name,
-      link: link
-    })
-  })
-  .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка загрузки данных профиля: ${res.status}`);
-  });
+function loadUserProfilePicture(avatar) {
+  buttonProfilePicture.style.backgroundImage = `url(${avatar})`;
 }
 
+function handleProfilePicture(evt) {
+  evt.preventDefault();
+  changeProfilePictureApi(inputProfilePicture.value)
+    .then((data) => {
+      loadUserProfilePicture(data.avatar);
+      closeModal(popupProfilePicture);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 
-// 7. Отображение количества лайков карточки
+formProfilePicture.addEventListener("submit", handleProfilePicture);
+
+loadInitialData();
+enableValidation(validationConfig);
