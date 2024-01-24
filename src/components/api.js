@@ -1,7 +1,3 @@
-//part 3 API
-//2. Перед стартом. Как сделать запрос к серверу
-const myId = "f3944d46f76a800a9481ae13";
-
 export const config = {
   baseUrl: "https://nomoreparties.co/v1/wff-cohort-4",
   headers: {
@@ -10,7 +6,6 @@ export const config = {
   },
 };
 
-//3. Загрузка информации о пользователе с сервера
 export const getUserInfoApi = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "GET",
@@ -25,7 +20,6 @@ export const getUserInfoApi = () => {
   });
 };
 
-//4. Загрузка карточек с сервера
 export const getCardsApi = () => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "GET",
@@ -38,7 +32,6 @@ export const getCardsApi = () => {
   });
 };
 
-//5. Редактирование профиля
 export const editUserInfoApi = (name, about) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
@@ -51,11 +44,10 @@ export const editUserInfoApi = (name, about) => {
     if (res.ok) {
       return res.json();
     }
-    return Promise.reject(`Ошибка загрузки данных профиля: ${res.status}`);
+    return Promise.reject(`Ошибка изменения данных профиля: ${res.status}`);
   });
 };
 
-// 6. Добавление новой карточки
 export const addNewCardApi = (name, link) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "POST",
@@ -68,37 +60,9 @@ export const addNewCardApi = (name, link) => {
     if (res.ok) {
       return res.json();
     }
-    return Promise.reject(`Ошибка загрузки данных профиля: ${res.status}`);
+    return Promise.reject(`Ошибка загрузки новой карточки: ${res.status}`);
   });
 };
-
-// 9. Постановка и снятие лайка
-
-// const sendLike = (cardId) => {
-//   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-//     method: "PUT",
-//     headers: config.headers,
-//
-//   }).then((res) => {
-//     if (res.ok) {
-//       return res.json();
-//     }
-//     return Promise.reject(`Ошибка отправки лайка: ${res.status}`);
-//   });
-// };
-
-// const removeLike = (cardId) => {
-//   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-//     method: "DELETE",
-//     headers: config.headers,
-//
-//   }).then((res) => {
-//     if (res.ok) {
-//       return res.json();
-//     }
-//     return Promise.reject(`Ошибка удаления лайка: ${res.status}`);
-//   });
-// };
 
 export const changeProfilePictureApi = (avatar) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
@@ -111,11 +75,9 @@ export const changeProfilePictureApi = (avatar) => {
     if (res.ok) {
       return res.json();
     }
-    return Promise.reject(`Ошибка загрузки фотографии профиля: ${res.status}`);
+    return Promise.reject(`Ошибка изменения фотографии профиля: ${res.status}`);
   });
 };
-
-// 8. Удаление карточки
 
 export const deleteCardApi = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
@@ -126,5 +88,29 @@ export const deleteCardApi = (cardId) => {
       return res.json();
     }
     return Promise.reject(`Ошибка удаления карточки: ${res.status}`);
+  });
+};
+
+export const sendLikeApi = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "PUT",
+    headers: config.headers,
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка отправки лайка: ${res.status}`);
+  });
+};
+
+export const removeLikeApi = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "DELETE",
+    headers: config.headers,
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка удаления лайка: ${res.status}`);
   });
 };

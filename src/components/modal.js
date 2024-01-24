@@ -4,6 +4,7 @@ export const openModal = (popup) => {
   popup.classList.add("popup_is-animated");
   popup.classList.add("popup_is-opened");
   popup.addEventListener("click", mouseHandler);
+  document.addEventListener("keydown", escapeHandler);
 };
 
 export const closeModal = (popup) => {
