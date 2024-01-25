@@ -1,5 +1,3 @@
-const popupButtonClose = document.querySelectorAll(".popup__close");
-
 export const openModal = (popup) => {
   popup.classList.add("popup_is-animated");
   popup.classList.add("popup_is-opened");
@@ -25,10 +23,3 @@ function mouseHandler(evt) {
     closeModal(evt.target);
   }
 }
-
-popupButtonClose.forEach((btn) => {
-  const popup = btn.closest(".popup");
-  btn.addEventListener("click", () => {
-    closeModal(popup);
-  });
-});

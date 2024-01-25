@@ -8,11 +8,11 @@ import {
 } from "./components/validate.js";
 import {
   config,
-  getUserInfoApi,
-  getCardsApi,
-  editUserInfoApi,
-  addNewCardApi,
-  changeProfilePictureApi,
+  getUserInfo,
+  getCards,
+  editUserInfo,
+  addNewCard,
+  changeProfilePicture,
 } from "./components/api.js";
 import { data } from "autoprefixer";
 export const placesContainer = document.querySelector(".places__list");
@@ -38,11 +38,12 @@ const popupImg = document.querySelector(".popup_type_image");
 const popupCardDescr = document.querySelector(".popup__caption");
 const formAddSubmitButton = formAdd.querySelector(".popup__button");
 const formEditSubmitButton = formEdit.querySelector(".popup__button");
-const formProfileSubmitButton =
+const formAvatarSubmitButton =
   formProfilePicture.querySelector(".popup__button");
+const popupButtonClose = document.querySelectorAll(".popup__close");
 
 const loadInitialData = () =>
-  Promise.all([getUserInfoApi(), getCardsApi()])
+  Promise.all([getUserInfo(), getCards()])
     .then(([userInfo, cardsInfo]) => {
       loadUserInfo(userInfo.name, userInfo.about);
       loadUserProfilePicture(userInfo.avatar);
@@ -52,14 +53,15 @@ const loadInitialData = () =>
             cardInfo,
             deleteCard,
             likeCard,
-            imagePopup,
-            cardInfo.owner._id
+            openImagePopup,
+            cardInfo.owner._id,
+            userInfo._id
           )
         )
       );
     })
     .catch((err) => {
-      loadUserInfo(null);
+      loadUserInfo("", "");
       console.log(
         "Ошибка при получении информации о пользователе или карточках",
         err
@@ -68,9 +70,10 @@ const loadInitialData = () =>
 
 loadInitialData();
 
-function isLoading(status, button) {
-  button.textContent = "Сохранение...";
-  return status;
+function setIsLoadingButton(status, button) {
+  return status
+    ? (button.textContent = "Сохранить")
+    : (button.textContent = "Сохранение...");
 }
 
 function loadUserInfo(userName, userAbout) {
@@ -78,13 +81,21 @@ function loadUserInfo(userName, userAbout) {
   profileDescr.textContent = userAbout;
 }
 
+function loadUserProfilePicture(avatar) {
+  buttonProfilePicture.style.backgroundImage = `url(${avatar})`;
+}
+
 function handleAddCard(evt) {
   evt.preventDefault();
+  setIsLoadingButton(false, formAddSubmitButton);
+
   const newCardName = nameAddInput.value;
   const newCardLink = linkAddInput.value;
 
-  addNewCardApi(newCardName, newCardLink)
+  addNewCard(newCardName, newCardLink)
     .then((card) => {
+      nameAddInput.value = "";
+      linkAddInput.value = "";
       closeModal(popupAdd);
       placesContainer.prepend(
         createCard(
@@ -97,7 +108,8 @@ function handleAddCard(evt) {
           },
           deleteCard,
           likeCard,
-          imagePopup,
+          openImagePopup,
+          card.owner._id,
           card.owner._id
         )
       );
@@ -106,21 +118,15 @@ function handleAddCard(evt) {
       console.log("Ошибка при создании карточек", err);
     })
     .finally(() => {
-      isLoading(false, formAddSubmitButton);
+      setIsLoadingButton(true, formAddSubmitButton);
     });
 }
 
-formAdd.addEventListener("submit", handleAddCard);
-buttonAdd.addEventListener("click", () => {
-  openModal(popupAdd);
-  clearValidation(formAdd, validationConfig);
-  nameAddInput.value = "";
-  linkAddInput.value = "";
-});
-
 function handleEditFormSubmit(evt) {
   evt.preventDefault();
-  editUserInfoApi(nameInput.value, jobInput.value)
+  setIsLoadingButton(false, formEditSubmitButton);
+
+  editUserInfo(nameInput.value, jobInput.value)
     .then((user) => {
       loadUserInfo(user.name, user.about);
       closeModal(popupEdit);
@@ -129,11 +135,38 @@ function handleEditFormSubmit(evt) {
       console.log("Ошибка при изменении информации профиля", err);
     })
     .finally(() => {
-      isLoading(false, formEditSubmitButton);
+      setIsLoadingButton(true, formEditSubmitButton);
     });
 }
 
-formEdit.addEventListener("submit", handleEditFormSubmit);
+function handleProfilePictureFormSubmit(evt) {
+  evt.preventDefault();
+  setIsLoadingButton(false, formAvatarSubmitButton);
+
+  changeProfilePicture(inputProfilePicture.value)
+    .then((data) => {
+      loadUserProfilePicture(data.avatar);
+      closeModal(popupProfilePicture);
+    })
+    .catch((err) => {
+      console.log("Ошибка при изменении аватара", err);
+    })
+    .finally(() => {
+      setIsLoadingButton(true, formAvatarSubmitButton);
+    });
+}
+
+function openImagePopup(name, link) {
+  popupCardDescr.textContent = name;
+  popupCardImg.alt = name;
+  popupCardImg.src = link;
+  openModal(popupImg);
+}
+
+buttonAdd.addEventListener("click", () => {
+  openModal(popupAdd);
+  clearValidation(formAdd, validationConfig);
+});
 
 buttonEdit.addEventListener("click", () => {
   nameInput.value = profileTitle.textContent;
@@ -148,32 +181,15 @@ buttonProfilePicture.addEventListener("click", () => {
   inputProfilePicture.value = "";
 });
 
-function loadUserProfilePicture(avatar) {
-  buttonProfilePicture.style.backgroundImage = `url(${avatar})`;
-}
+formEdit.addEventListener("submit", handleEditFormSubmit);
+formProfilePicture.addEventListener("submit", handleProfilePictureFormSubmit);
+formAdd.addEventListener("submit", handleAddCard);
 
-function handleProfilePicture(evt) {
-  evt.preventDefault();
-  changeProfilePictureApi(inputProfilePicture.value)
-    .then((data) => {
-      loadUserProfilePicture(data.avatar);
-      closeModal(popupProfilePicture);
-    })
-    .catch((err) => {
-      console.log("Ошибка при изменении аватара", err);
-    })
-    .finally(() => {
-      isLoading(false, formProfileSubmitButton);
-    });
-}
-
-formProfilePicture.addEventListener("submit", handleProfilePicture);
-
-function imagePopup(name, link) {
-  popupCardDescr.textContent = name;
-  popupCardImg.alt = name;
-  popupCardImg.src = link;
-  openModal(popupImg);
-}
+popupButtonClose.forEach((btn) => {
+  const popup = btn.closest(".popup");
+  btn.addEventListener("click", () => {
+    closeModal(popup);
+  });
+});
 
 enableValidation(validationConfig);

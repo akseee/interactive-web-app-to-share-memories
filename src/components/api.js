@@ -6,111 +6,76 @@ export const config = {
   },
 };
 
-export const getUserInfoApi = () => {
+function checkResponse(res) {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Ошибка: ${res.status}`);
+}
+
+export const getUserInfo = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "GET",
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(
-      `Ошибка получения информации о пользователе: ${res.status}`
-    );
-  });
+  }).then((res) => checkResponse(res));
 };
 
-export const getCardsApi = () => {
+export const getCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "GET",
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка загрузки карточек: ${res.status}`);
-  });
+  }).then((res) => checkResponse(res));
 };
 
-export const editUserInfoApi = (name, about) => {
+export const editUserInfo = (name, about) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({
-      name: name,
-      about: about,
+      name,
+      about,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка изменения данных профиля: ${res.status}`);
-  });
+  }).then((res) => checkResponse(res));
 };
 
-export const addNewCardApi = (name, link) => {
+export const addNewCard = (name, link) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "POST",
     headers: config.headers,
     body: JSON.stringify({
-      name: name,
-      link: link,
+      name,
+      link,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка загрузки новой карточки: ${res.status}`);
-  });
+  }).then((res) => checkResponse(res));
 };
 
-export const changeProfilePictureApi = (avatar) => {
+export const changeProfilePicture = (avatar) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({
-      avatar: avatar,
+      avatar,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка изменения фотографии профиля: ${res.status}`);
-  });
+  }).then((res) => checkResponse(res));
 };
 
-export const deleteCardApi = (cardId) => {
+export const deleteCardServer = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка удаления карточки: ${res.status}`);
-  });
+  }).then((res) => checkResponse(res));
 };
 
-export const sendLikeApi = (cardId) => {
+export const sendLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "PUT",
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка отправки лайка: ${res.status}`);
-  });
+  }).then((res) => checkResponse(res));
 };
 
-export const removeLikeApi = (cardId) => {
+export const removeLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка удаления лайка: ${res.status}`);
-  });
+  }).then((res) => checkResponse(res));
 };

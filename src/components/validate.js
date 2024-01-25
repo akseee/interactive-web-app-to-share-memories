@@ -21,16 +21,20 @@ const hideInputError = (formElement, inputElement) => {
   errorElement.textContent = "";
 };
 
-const hasValidInput = (inputList) => {
+const hasInvalidInput = (inputList) => {
   return inputList.some((inputElement) => {
     return !inputElement.validity.valid;
   });
 };
 
+const disableSubmitButton = (button) => {
+  button.disabled = true;
+  button.classList.add(validationConfig.inactiveButtonClass);
+};
+
 const toggleButtonState = (inputList, buttonElement) => {
-  if (hasValidInput(inputList)) {
-    buttonElement.disabled = true;
-    buttonElement.classList.add(validationConfig.inactiveButtonClass);
+  if (hasInvalidInput(inputList)) {
+    disableSubmitButton(buttonElement);
   } else {
     buttonElement.disabled = false;
     buttonElement.classList.remove(validationConfig.inactiveButtonClass);
@@ -70,9 +74,6 @@ const setEventListeners = (config, formElement) => {
 export const enableValidation = (config) => {
   const formList = Array.from(document.querySelectorAll(config.formSelector));
   formList.forEach((formElement) => {
-    formElement.addEventListener("submit", (e) => {
-      e.preventDefault();
-    });
     setEventListeners(config, formElement);
   });
 };
@@ -85,5 +86,5 @@ export const clearValidation = (formElement, config) => {
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement);
   });
-  toggleButtonState(inputList, buttonElement);
+  disableSubmitButton(buttonElement);
 };
