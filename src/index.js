@@ -40,7 +40,7 @@ const formAddSubmitButton = formAdd.querySelector(".popup__button");
 const formEditSubmitButton = formEdit.querySelector(".popup__button");
 const formAvatarSubmitButton =
   formProfilePicture.querySelector(".popup__button");
-const popupButtonClose = document.querySelectorAll(".popup__close");
+const popupButtonCloseList = document.querySelectorAll(".popup__close");
 
 const loadInitialData = () =>
   Promise.all([getUserInfo(), getCards()])
@@ -71,9 +71,9 @@ const loadInitialData = () =>
 loadInitialData();
 
 function setIsLoadingButton(status, button) {
-  return status
-    ? (button.textContent = "Сохранить")
-    : (button.textContent = "Сохранение...");
+  status
+    ? (button.textContent = "Сохранение...")
+    : (button.textContent = "Сохранить");
 }
 
 function loadUserInfo(userName, userAbout) {
@@ -87,7 +87,7 @@ function loadUserProfilePicture(avatar) {
 
 function handleAddCard(evt) {
   evt.preventDefault();
-  setIsLoadingButton(false, formAddSubmitButton);
+  setIsLoadingButton(true, formAddSubmitButton);
 
   const newCardName = nameAddInput.value;
   const newCardLink = linkAddInput.value;
@@ -118,13 +118,13 @@ function handleAddCard(evt) {
       console.log("Ошибка при создании карточек", err);
     })
     .finally(() => {
-      setIsLoadingButton(true, formAddSubmitButton);
+      setIsLoadingButton(false, formAddSubmitButton);
     });
 }
 
 function handleEditFormSubmit(evt) {
   evt.preventDefault();
-  setIsLoadingButton(false, formEditSubmitButton);
+  setIsLoadingButton(true, formEditSubmitButton);
 
   editUserInfo(nameInput.value, jobInput.value)
     .then((user) => {
@@ -135,13 +135,13 @@ function handleEditFormSubmit(evt) {
       console.log("Ошибка при изменении информации профиля", err);
     })
     .finally(() => {
-      setIsLoadingButton(true, formEditSubmitButton);
+      setIsLoadingButton(false, formEditSubmitButton);
     });
 }
 
 function handleProfilePictureFormSubmit(evt) {
   evt.preventDefault();
-  setIsLoadingButton(false, formAvatarSubmitButton);
+  setIsLoadingButton(true, formAvatarSubmitButton);
 
   changeProfilePicture(inputProfilePicture.value)
     .then((data) => {
@@ -152,7 +152,7 @@ function handleProfilePictureFormSubmit(evt) {
       console.log("Ошибка при изменении аватара", err);
     })
     .finally(() => {
-      setIsLoadingButton(true, formAvatarSubmitButton);
+      setIsLoadingButton(false, formAvatarSubmitButton);
     });
 }
 
@@ -185,7 +185,7 @@ formEdit.addEventListener("submit", handleEditFormSubmit);
 formProfilePicture.addEventListener("submit", handleProfilePictureFormSubmit);
 formAdd.addEventListener("submit", handleAddCard);
 
-popupButtonClose.forEach((btn) => {
+popupButtonCloseList.forEach((btn) => {
   const popup = btn.closest(".popup");
   btn.addEventListener("click", () => {
     closeModal(popup);
