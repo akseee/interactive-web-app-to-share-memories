@@ -1,11 +1,7 @@
 import "./pages/index.css";
 import { createCard, deleteCard, likeCard } from "./components/card.js";
 import { openModal, closeModal } from "./components/modal.js";
-import {
-  clearValidation,
-  enableValidation,
-  validationConfig,
-} from "./components/validate.js";
+import { clearValidation, enableValidation } from "./components/validate.js";
 import {
   config,
   getUserInfo,
@@ -41,6 +37,15 @@ const formEditSubmitButton = formEdit.querySelector(".popup__button");
 const formAvatarSubmitButton =
   formProfilePicture.querySelector(".popup__button");
 const popupButtonCloseList = document.querySelectorAll(".popup__close");
+
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
 
 const loadInitialData = () =>
   Promise.all([getUserInfo(), getCards()])
@@ -94,8 +99,8 @@ function handleAddCard(evt) {
 
   addNewCard(newCardName, newCardLink)
     .then((card) => {
-      nameAddInput.value = "";
-      linkAddInput.value = "";
+      formAdd.reset();
+      clearValidation(formAdd, validationConfig);
       closeModal(popupAdd);
       placesContainer.prepend(
         createCard(
@@ -165,7 +170,6 @@ function openImagePopup(name, link) {
 
 buttonAdd.addEventListener("click", () => {
   openModal(popupAdd);
-  clearValidation(formAdd, validationConfig);
 });
 
 buttonEdit.addEventListener("click", () => {
