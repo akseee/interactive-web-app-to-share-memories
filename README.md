@@ -7,9 +7,8 @@ The project is built with vanilla JavaScript, CSS and HTML. The project is organ
 The project uses Webpack for bundling and optimization. Configurations are set up for both development and production builds.
 CSS and JS are combined into one file, minified, and transpiled using Babel.
 
-[Deploy](https://akseee.github.io/mesto-project-ff/)
+[Deploy](https://akseee.github.io/interactive-web-app-to-share-memories)
 
-[Figma](https://www.figma.com/design/bjyvbKKJN2naO0ucURl2Z0/JavaScript.-Sprint-5?node-id=0-1&t=9uRsa5g4SbVaLUIj-0)
 
 #### Features
 
